@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeknoKarşılaştır — Akıllı Teknoloji Rehberi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080b10;--surface:#0f1318;--card:#141920;--border:#1e2530;--accent:#f0a500;--accent2:#00c9a7;--danger:#ff4d6d;--text:#e8edf5;--muted:#5a6475;--soft:#9aa3b0;}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(240,165,0,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(0,201,167,0.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(8,11,16,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:2px;color:var(--text);cursor:pointer;}
+.logo span{color:var(--accent)}
+.compare-btn{display:flex;align-items:center;gap:8px;background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.3);color:var(--accent);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.compare-btn:hover{background:rgba(240,165,0,0.2)}
+.compare-count{background:var(--accent);color:#000;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.page{display:none;position:relative;z-index:1}.page.active{display:block}
+.hero{text-align:center;padding:80px 20px 60px;}
+.hero-badge{display:inline-block;background:rgba(0,201,167,0.1);border:1px solid rgba(0,201,167,0.25);color:var(--accent2);font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:24px;}
+.hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(52px,10vw,96px);line-height:0.95;letter-spacing:3px;margin-bottom:20px;}
+.hero h1 .line2{color:var(--accent)}
+.hero p{color:var(--soft);font-size:16px;max-width:480px;margin:0 auto}
+.search-wrap{max-width:520px;margin:0 auto 40px;position:relative;}
+.search-wrap input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 20px 14px 48px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
+.search-wrap input:focus{border-color:var(--accent)}.search-wrap input::placeholder{color:var(--muted)}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;pointer-events:none;}
+.cat-tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;padding:0 20px;}
+.cat-tab{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:8px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--soft);font-family:'DM Sans',sans-serif;}
+.cat-tab.active,.cat-tab:hover{background:var(--accent);color:#000;border-color:var(--accent);}
+.grid-wrap{max-width:1100px;margin:0 auto;padding:0 20px 80px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s;animation:fadeUp 0.5s ease both;position:relative;}
+.card:hover{transform:translateY(-4px);border-color:rgba(240,165,0,0.4);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+.card-img{height:200px;background:#0d1117;position:relative;overflow:hidden;}
+.card-img svg{width:100%;height:100%;position:absolute;inset:0;}
+.card-body{padding:20px}
+.card-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-weight:600;margin-bottom:8px;}
+.card-name{font-size:17px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.card-tagline{font-size:13px;color:var(--soft);margin-bottom:16px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;}
+.card-price{font-size:18px;font-weight:700;color:var(--accent)}
+.card-score{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--soft);}
+.star{color:var(--accent);font-size:14px}
+.add-compare{position:absolute;top:12px;right:12px;background:rgba(8,11,16,0.75);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600;color:var(--soft);cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;backdrop-filter:blur(8px);}
+.add-compare:hover,.add-compare.added{background:rgba(240,165,0,0.15);border-color:var(--accent);color:var(--accent);}
+.badge-hot{position:absolute;top:12px;left:12px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:100px;text-transform:uppercase;z-index:2;}
+#detail-page{padding:0 20px 80px}
+.detail-wrap{max-width:960px;margin:0 auto}
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--soft);font-size:14px;font-weight:600;cursor:pointer;padding:20px 0;transition:color 0.2s;background:none;border:none;font-family:'DM Sans',sans-serif;}
+.back-btn:hover{color:var(--accent)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:8px;}
+@media(max-width:700px){.detail-grid{grid-template-columns:1fr}}
+.detail-img{background:#0d1117;border:1px solid var(--border);border-radius:20px;height:360px;position:relative;overflow:hidden;}
+.detail-img svg{width:100%;height:100%;position:absolute;inset:0;}
+.detail-cat{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);font-weight:600;margin-bottom:12px;}
+.detail-name{font-family:'Bebas Neue',cursive;font-size:clamp(36px,5vw,52px);letter-spacing:2px;line-height:1;margin-bottom:8px;}
+.detail-tagline{color:var(--soft);font-size:15px;margin-bottom:24px}
+.detail-score{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+.big-score{font-size:40px;font-weight:700;color:var(--accent);font-family:'Bebas Neue',cursive;letter-spacing:2px;}
+.score-stars{display:flex;gap:2px;font-size:20px}
+.detail-price{font-size:32px;font-weight:700;color:var(--text);margin-bottom:28px;}
+.detail-price span{font-size:14px;color:var(--muted);font-weight:400}
+.trendyol-btn{display:block;width:100%;background:var(--accent);color:#000;border:none;border-radius:12px;padding:16px;text-align:center;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;margin-bottom:12px;}
+.trendyol-btn:hover{background:#e09600;transform:translateY(-1px);box-shadow:0 6px 24px rgba(240,165,0,0.3)}
+.add-compare-detail{display:block;width:100%;background:transparent;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--soft);cursor:pointer;transition:all 0.2s;}
+.add-compare-detail:hover{border-color:var(--accent);color:var(--accent)}
+.specs-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin:36px 0 16px;}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;}
+.spec-label{font-size:11px;color:var(--muted);margin-bottom:4px}.spec-value{font-size:14px;font-weight:600}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;}
+.pros,.cons{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.pros{border-top:3px solid var(--accent2)}.cons{border-top:3px solid var(--danger)}
+.pc-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.pros .pc-title{color:var(--accent2)}.cons .pc-title{color:var(--danger)}
+.pc-item{font-size:13px;color:var(--soft);margin-bottom:8px;padding-left:16px;position:relative}
+.pc-item::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%}
+.pros .pc-item::before{background:var(--accent2)}.cons .pc-item::before{background:var(--danger)}
+#compare-page{padding:20px 20px 80px}
+.compare-wrap{max-width:1000px;margin:0 auto}
+.compare-wrap h2{font-family:'Bebas Neue',cursive;font-size:40px;letter-spacing:2px;margin-bottom:8px;}
+.compare-wrap .sub{color:var(--soft);font-size:14px;margin-bottom:32px}
+.compare-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border);}
+.compare-table th{background:var(--surface);padding:20px;text-align:center;font-size:15px;font-weight:700;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.compare-table th:first-child{text-align:left;width:140px}
+.compare-table td{padding:16px 20px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);text-align:center;font-size:14px;}
+.compare-table td:first-child{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:last-child,.compare-table th:last-child{border-right:none}
+.compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+.remove-col{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;margin-left:8px;transition:color 0.2s;vertical-align:middle;}
+.remove-col:hover{color:var(--danger)}
+.empty-compare{text-align:center;padding:80px 20px;color:var(--muted);}
+.empty-compare .icon{font-size:48px;margin-bottom:16px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp 0.4s ease}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 24px;font-size:14px;font-weight:600;color:var(--text);z-index:999;transition:transform 0.3s;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.toast.show{transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="showPage('home')">Tekno<span>Karşılaştır</span></div>
+  <button class="compare-btn" onclick="showPage('compare')">⚖️ Karşılaştır <span class="compare-count" id="compare-count">0</span></button>
+</nav>
+
+<div id="home-page" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🇹🇷 Türkiye'nin Teknoloji Rehberi</div>
+    <h1>TEKNO<br><span class="line2">KARŞILAŞTIR</span></h1>
+    <p>En iyi teknoloji ürünlerini incele, karşılaştır ve en uygun fiyatı bul.</p>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Ürün ara... (iPhone, MacBook, AirPods...)" oninput="filterProducts()">
+  </div>
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat('Tümü',this)">Tümü</button>
+    <button class="cat-tab" onclick="filterCat('Telefon',this)">📱 Telefonlar</button>
+    <button class="cat-tab" onclick="filterCat('Laptop',this)">💻 Laptoplar</button>
+    <button class="cat-tab" onclick="filterCat('Kulaklık',this)">🎧 Kulaklıklar</button>
+  </div>
+  <div class="grid-wrap"><div class="grid" id="product-grid"></div></div>
+</div>
+
+<div id="detail-page" class="page">
+  <div class="detail-wrap">
+    <button class="back-btn" onclick="showPage('home')">← Ürünlere Dön</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<div id="compare-page" class="page">
+  <div class="compare-wrap">
+    <button class="back-btn" onclick="showPage('home')">← Ürünlere Dön</button>
+    <h2>KARŞILAŞTIRMA</h2>
+    <p class="sub">Seçili ürünleri yan yana karşılaştır</p>
+    <div id="compare-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function getSVG(type, c1, c2, ac) {
+  var id = 'g' + Math.random().toString(36).substr(2,8);
+  if (type === 'phone') {
+    return '<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+id+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="'+c1+'"/><stop offset="100%" stop-color="'+c2+'"/></linearGradient></defs><rect width="300" height="200" fill="url(#'+id+')"/><circle cx="220" cy="40" r="60" fill="'+ac+'" opacity="0.07"/><circle cx="80" cy="160" r="40" fill="'+ac+'" opacity="0.05"/><rect x="110" y="20" width="80" height="155" rx="12" fill="#1a2030" stroke="'+ac+'" stroke-width="1.5" opacity="0.9"/><rect x="115" y="35" width="70" height="110" rx="4" fill="#0d1520"/><rect x="115" y="35" width="70" height="110" rx="4" fill="'+ac+'" opacity="0.06"/><circle cx="150" cy="28" r="3" fill="'+ac+'" opacity="0.7"/><rect x="122" y="48" width="56" height="4" rx="2" fill="'+ac+'" opacity="0.5"/><rect x="122" y="58" width="40" height="3" rx="1.5" fill="white" opacity="0.15"/><rect x="122" y="68" width="50" height="3" rx="1.5" fill="white" opacity="0.1"/><rect x="122" y="80" width="14" height="14" rx="3" fill="'+ac+'" opacity="0.7"/><rect x="140" y="80" width="14" height="14" rx="3" fill="#00c9a7" opacity="0.6"/><rect x="158" y="80" width="14" height="14" rx="3" fill="#ff4d6d" opacity="0.5"/><rect x="122" y="98" width="14" height="14" rx="3" fill="#7b61ff" opacity="0.6"/><rect x="140" y="98" width="14" height="14" rx="3" fill="'+ac+'" opacity="0.4"/><rect x="135" y="158" width="30" height="3" rx="1.5" fill="'+ac+'" opacity="0.4"/><rect x="190" y="60" width="3" height="20" rx="1.5" fill="'+ac+'" opacity="0.5"/><text x="150" y="192" text-anchor="middle" fill="'+ac+'" font-size="9" opacity="0.35" font-family="monospace">SMARTPHONE</text></svg>';
+  }
+  if (type === 'laptop') {
+    return '<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+id+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="'+c1+'"/><stop offset="100%" stop-color="'+c2+'"/></linearGradient></defs><rect width="300" height="200" fill="url(#'+id+')"/><circle cx="240" cy="30" r="70" fill="'+ac+'" opacity="0.05"/><rect x="55" y="28" width="190" height="120" rx="8" fill="#1a2030" stroke="'+ac+'" stroke-width="1.5" opacity="0.9"/><rect x="62" y="35" width="176" height="106" rx="4" fill="#0a0f18"/><rect x="62" y="35" width="176" height="106" rx="4" fill="'+ac+'" opacity="0.04"/><rect x="72" y="45" width="100" height="6" rx="3" fill="'+ac+'" opacity="0.6"/><rect x="72" y="57" width="156" height="3" rx="1.5" fill="white" opacity="0.1"/><rect x="72" y="65" width="130" height="3" rx="1.5" fill="white" opacity="0.08"/><rect x="72" y="85" width="60" height="2.5" rx="1.2" fill="#00c9a7" opacity="0.5"/><rect x="80" y="92" width="80" height="2.5" rx="1.2" fill="'+ac+'" opacity="0.4"/><rect x="80" y="99" width="55" height="2.5" rx="1.2" fill="#ff4d6d" opacity="0.4"/><rect x="72" y="106" width="70" height="2.5" rx="1.2" fill="#00c9a7" opacity="0.4"/><circle cx="150" cy="39" r="2.5" fill="'+ac+'" opacity="0.5"/><rect x="40" y="148" width="220" height="18" rx="4" fill="#141920" stroke="'+ac+'" stroke-width="1" opacity="0.8"/><rect x="115" y="152" width="70" height="10" rx="3" fill="#1e2530" stroke="'+ac+'" stroke-width="0.8" opacity="0.6"/><rect x="55" y="151" width="8" height="5" rx="1" fill="'+ac+'" opacity="0.2"/><rect x="67" y="151" width="8" height="5" rx="1" fill="'+ac+'" opacity="0.2"/><text x="150" y="192" text-anchor="middle" fill="'+ac+'" font-size="9" opacity="0.35" font-family="monospace">LAPTOP</text></svg>';
+  }
+  if (type === 'headphone') {
+    return '<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+id+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="'+c1+'"/><stop offset="100%" stop-color="'+c2+'"/></linearGradient></defs><rect width="300" height="200" fill="url(#'+id+')"/><circle cx="150" cy="100" r="90" fill="'+ac+'" opacity="0.04"/><path d="M 90 110 Q 150 30 210 110" stroke="'+ac+'" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.9"/><path d="M 90 110 Q 150 30 210 110" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.08"/><ellipse cx="87" cy="122" rx="22" ry="28" fill="#1a2030" stroke="'+ac+'" stroke-width="2" opacity="0.95"/><ellipse cx="87" cy="122" rx="14" ry="18" fill="#0d1520"/><ellipse cx="87" cy="122" rx="8" ry="10" fill="'+ac+'" opacity="0.25"/><circle cx="87" cy="122" r="3" fill="'+ac+'" opacity="0.7"/><ellipse cx="213" cy="122" rx="22" ry="28" fill="#1a2030" stroke="'+ac+'" stroke-width="2" opacity="0.95"/><ellipse cx="213" cy="122" rx="14" ry="18" fill="#0d1520"/><ellipse cx="213" cy="122" rx="8" ry="10" fill="'+ac+'" opacity="0.25"/><circle cx="213" cy="122" r="3" fill="'+ac+'" opacity="0.7"/><path d="M 240 95 Q 248 105 240 115" stroke="'+ac+'" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M 246 88 Q 258 103 246 118" stroke="'+ac+'" stroke-width="1.5" fill="none" opacity="0.3"/><text x="150" y="192" text-anchor="middle" fill="'+ac+'" font-size="9" opacity="0.35" font-family="monospace">HEADPHONES</text></svg>';
+  }
+  if (type === 'earbud') {
+    return '<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+id+'" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="'+c1+'"/><stop offset="100%" stop-color="'+c2+'"/></linearGradient></defs><rect width="300" height="200" fill="url(#'+id+')"/><rect x="80" y="55" width="140" height="100" rx="20" fill="#1a2030" stroke="'+ac+'" stroke-width="1.5" opacity="0.9"/><rect x="88" y="63" width="124" height="84" rx="14" fill="#0d1520" opacity="0.8"/><ellipse cx="118" cy="105" rx="18" ry="22" fill="#141920" stroke="'+ac+'" stroke-width="1" opacity="0.8"/><ellipse cx="118" cy="105" rx="10" ry="13" fill="'+ac+'" opacity="0.2"/><circle cx="118" cy="105" r="4" fill="'+ac+'" opacity="0.6"/><ellipse cx="182" cy="105" rx="18" ry="22" fill="#141920" stroke="'+ac+'" stroke-width="1" opacity="0.8"/><ellipse cx="182" cy="105" rx="10" ry="13" fill="'+ac+'" opacity="0.2"/><circle cx="182" cy="105" r="4" fill="'+ac+'" opacity="0.6"/><circle cx="150" cy="143" r="3" fill="'+ac+'" opacity="0.8"/><circle cx="150" cy="143" r="6" fill="'+ac+'" opacity="0.15"/><rect x="140" y="151" width="20" height="3" rx="1.5" fill="'+ac+'" opacity="0.3"/><text x="150" y="192" text-anchor="middle" fill="'+ac+'" font-size="9" opacity="0.35" font-family="monospace">TRUE WIRELESS</text></svg>';
+  }
+  return '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#0d1117"/><text x="150" y="110" text-anchor="middle" fill="'+ac+'" font-size="50">📦</text></svg>';
+}
+
+var PRODUCTS = [
+  {id:1,cat:'Telefon',type:'phone',c1:'#0d1520',c2:'#1a2535',ac:'#a8b8d0',hot:true,name:'iPhone 15 Pro',tagline:'Apple\'ın en güçlü telefonu',price:'54.999 ₺',score:'9.4',stars:5,link:'https://www.trendyol.com/sr?q=iphone+15+pro',specs:{'İşlemci':'Apple A17 Pro','RAM':'8 GB','Depolama':'128 GB - 1 TB','Ekran':'6.1" Super Retina XDR','Kamera':'48 MP Ana + 12 MP','Batarya':'3274 mAh','OS':'iOS 17','Malzeme':'Titanyum'},pros:['Üstün A17 Pro performansı','Titanyum sağlamlık','Mükemmel kamera','Action Button'],cons:['Yüksek fiyat','Küçük batarya','USB-C geç geldi']},
+  {id:2,cat:'Telefon',type:'phone',c1:'#0d1a1f',c2:'#162535',ac:'#4fc3f7',hot:false,name:'Samsung Galaxy S24 Ultra',tagline:'Android\'in zirvesi, S Pen dahil',price:'49.999 ₺',score:'9.2',stars:5,link:'https://www.trendyol.com/sr?q=samsung+s24+ultra',specs:{'İşlemci':'Snapdragon 8 Gen 3','RAM':'12 GB','Depolama':'256 GB - 1 TB','Ekran':'6.8" Dynamic AMOLED','Kamera':'200 MP Ana','Batarya':'5000 mAh','OS':'Android 14','Özellik':'S Pen Dahil'},pros:['200 MP kamera','S Pen','Büyük batarya','Galaxy AI'],cons:['Büyük ve ağır','Pahalı','S Pen sınırlı']},
+  {id:3,cat:'Telefon',type:'phone',c1:'#1a0d0d',c2:'#2d1515',ac:'#ff6b35',hot:false,name:'Xiaomi 14 Ultra',tagline:'Leica ortaklığıyla fotoğraf canavarı',price:'34.999 ₺',score:'8.8',stars:4,link:'https://www.trendyol.com/sr?q=xiaomi+14+ultra',specs:{'İşlemci':'Snapdragon 8 Gen 3','RAM':'16 GB','Depolama':'512 GB','Ekran':'6.73" AMOLED 120Hz','Kamera':'50 MP Leica','Batarya':'5300 mAh','OS':'Android 14','Şarj':'90W'},pros:['Leica kamera','90W şarj','16 GB RAM','Fiyat/performans'],cons:['MIUI reklamları','Uygulama uyumu','Servis az']},
+  {id:10,cat:'Telefon',type:'phone',c1:'#0d150d',c2:'#162516',ac:'#66bb6a',hot:false,name:'Google Pixel 9 Pro',tagline:'Google AI gücü avucunuzda',price:'38.999 ₺',score:'9.0',stars:5,link:'https://www.trendyol.com/sr?q=google+pixel+9+pro',specs:{'İşlemci':'Google Tensor G4','RAM':'16 GB','Depolama':'256 GB - 1 TB','Ekran':'6.3" LTPO OLED 120Hz','Kamera':'50 MP + 48 MP Tele','Batarya':'4700 mAh','OS':'Android 15','Özellik':'Gemini AI'},pros:['En iyi fotoğraf AI','7 yıl güncelleme','Temiz Android','Gemini AI'],cons:['Tensor ısınma','Sınırlı dağıtım','Servis az']},
+  {id:11,cat:'Telefon',type:'phone',c1:'#150d1a',c2:'#251630',ac:'#ce93d8',hot:false,name:'OnePlus 12',tagline:'Hız odaklı amiral gemisi',price:'28.999 ₺',score:'8.6',stars:4,link:'https://www.trendyol.com/sr?q=oneplus+12',specs:{'İşlemci':'Snapdragon 8 Gen 3','RAM':'12 GB','Depolama':'256 GB','Ekran':'6.82" LTPO AMOLED','Kamera':'50 MP Hasselblad','Batarya':'5400 mAh','OS':'OxygenOS 14','Şarj':'100W'},pros:['100W şarj hızı','Hasselblad kamera','Büyük batarya','Fiyat/performans'],cons:['Az popüler','OxygenOS karmaşık','Kamera rakiplerden geride']},
+  {id:12,cat:'Telefon',type:'phone',c1:'#1a1500',c2:'#2d2500',ac:'#f0a500',hot:false,name:'iPhone 15',tagline:'Orta segment Apple deneyimi',price:'36.999 ₺',score:'8.7',stars:4,link:'https://www.trendyol.com/sr?q=iphone+15',specs:{'İşlemci':'Apple A16 Bionic','RAM':'6 GB','Depolama':'128 GB - 512 GB','Ekran':'6.1" Super Retina XDR','Kamera':'48 MP Ana','Batarya':'3349 mAh','OS':'iOS 17','Port':'USB-C'},pros:['USB-C geçişi','48 MP kamera','iOS ekosistemi','Hafif'],cons:['A16 (Pro\'dan eski)','60Hz ekran','Titanyum yok']},
+  {id:4,cat:'Laptop',type:'laptop',c1:'#0d1117',c2:'#141c2a',ac:'#f0a500',hot:true,name:'MacBook Pro 14" M3',tagline:'Profesyoneller için en iyi laptop',price:'74.999 ₺',score:'9.6',stars:5,link:'https://www.trendyol.com/sr?q=macbook+pro+m3',specs:{'İşlemci':'Apple M3 Pro','RAM':'18 GB Unified','Depolama':'512 GB SSD','Ekran':'14.2" Liquid Retina XDR','Grafik':'M3 Pro 18-core GPU','Batarya':'18 saat','Ağırlık':'1.61 kg','Port':'Thunderbolt 4 × 3'},pros:['M3 Pro performansı','18 saat batarya','Retina ekran','macOS ekosistemi'],cons:['Çok pahalı','RAM yükseltilemiyor','Windows uyumsuz']},
+  {id:5,cat:'Laptop',type:'laptop',c1:'#0d1a10',c2:'#121f15',ac:'#00c9a7',hot:false,name:'ASUS ROG Zephyrus G14',tagline:'Taşınabilir oyun canavarı',price:'42.999 ₺',score:'8.9',stars:4,link:'https://www.trendyol.com/sr?q=asus+rog+zephyrus+g14',specs:{'İşlemci':'AMD Ryzen 9 7940HS','RAM':'32 GB DDR5','Depolama':'1 TB NVMe','Ekran':'14" QHD 165Hz','Grafik':'RTX 4070 8GB','Batarya':'12 saat','Ağırlık':'1.65 kg','Soğutma':'Tri-Fan'},pros:['RTX 4070','Kompakt tasarım','32 GB RAM','165Hz ekran'],cons:['Oyunda ısınma','Tuş takımı yok','Batarya oyunda 3 saat']},
+  {id:6,cat:'Laptop',type:'laptop',c1:'#0f0d1a',c2:'#18152a',ac:'#7b61ff',hot:false,name:'Dell XPS 15',tagline:'İş ve yaratıcılar için premium',price:'55.999 ₺',score:'8.7',stars:4,link:'https://www.trendyol.com/sr?q=dell+xps+15',specs:{'İşlemci':'Intel Core i9-13900H','RAM':'32 GB DDR5','Depolama':'1 TB SSD','Ekran':'15.6" OLED 3.5K','Grafik':'RTX 4060 8GB','Batarya':'10 saat','Ağırlık':'1.86 kg','Oran':'16:10'},pros:['OLED ekran','Sağlam yapı','Güçlü işlemci','Geniş oran'],cons:['Pahalı','Soğutma bazen yetersiz','SD kart yok']},
+  {id:13,cat:'Laptop',type:'laptop',c1:'#1a0d0f',c2:'#2a1518',ac:'#ff4d6d',hot:false,name:'Lenovo ThinkPad X1 Carbon',tagline:'İş dünyasının efsanevi tercihi',price:'48.999 ₺',score:'9.0',stars:5,link:'https://www.trendyol.com/sr?q=lenovo+thinkpad+x1+carbon',specs:{'İşlemci':'Intel Core Ultra 7','RAM':'32 GB LPDDR5','Depolama':'1 TB SSD','Ekran':'14" OLED 2.8K','Grafik':'Intel Arc','Batarya':'15 saat','Ağırlık':'1.12 kg','Sertifika':'MIL-STD-810H'},pros:['Ultra hafif 1.12kg','15 saat batarya','Askeri dayanıklılık','Mükemmel klavye'],cons:['Oyun için değil','Entegre GPU','Pahalı']},
+  {id:14,cat:'Laptop',type:'laptop',c1:'#0d1117',c2:'#0f1a10',ac:'#29b6f6',hot:true,name:'HP Spectre x360 14',tagline:'En şık 2-in-1 dönüştürülebilir',price:'44.999 ₺',score:'8.8',stars:4,link:'https://www.trendyol.com/sr?q=hp+spectre+x360',specs:{'İşlemci':'Intel Core Ultra 7 155H','RAM':'32 GB','Depolama':'1 TB SSD','Ekran':'14" OLED 2.8K Touch','Grafik':'Intel Arc','Batarya':'17 saat','Ağırlık':'1.55 kg','Özellik':'360° + Kalem Dahil'},pros:['OLED dokunmatik','360° tablet modu','Kalem dahil','Premium tasarım'],cons:['Entegre GPU zayıf','Pahalı','Fan gürültüsü']},
+  {id:15,cat:'Laptop',type:'laptop',c1:'#0d1520',c2:'#101d28',ac:'#4dd0e1',hot:false,name:'MacBook Air M3 15"',tagline:'Fanless ultra-ince mükemmellik',price:'52.999 ₺',score:'9.1',stars:5,link:'https://www.trendyol.com/sr?q=macbook+air+m3+15',specs:{'İşlemci':'Apple M3','RAM':'8 GB - 24 GB','Depolama':'256 GB - 2 TB','Ekran':'15.3" Liquid Retina','Grafik':'M3 10-core GPU','Batarya':'18 saat','Ağırlık':'1.51 kg','Soğutma':'Fansız'},pros:['Tamamen sessiz','18 saat batarya','Retina ekran','Ultra ince'],cons:['Fan yok yoğun iş için sınırlı','8GB base RAM az','Pahalı']},
+  {id:7,cat:'Kulaklık',type:'headphone',c1:'#0d1117',c2:'#161d28',ac:'#f0a500',hot:true,name:'Sony WH-1000XM5',tagline:'Sektörün en iyi ANC kulaklığı',price:'8.999 ₺',score:'9.5',stars:5,link:'https://www.trendyol.com/sr?q=sony+wh-1000xm5',specs:{'Tip':'Over-Ear Wireless','ANC':'Sektör Lideri','Batarya':'30 saat','Hızlı Şarj':'3 dk → 3 saat','Sürücü':'30mm','Codec':'LDAC, AAC, SBC','Ağırlık':'250g','Mikrofon':'8 Mikrofon'},pros:['En iyi ANC','30 saat batarya','Üstün ses kalitesi','Konforlu'],cons:['Plastik yapı','Tam katlanmıyor','Mikrofon orta']},
+  {id:8,cat:'Kulaklık',type:'earbud',c1:'#0d1117',c2:'#1a1a24',ac:'#e8e8f0',hot:false,name:'Apple AirPods Pro 2',tagline:'iPhone kullanıcıları için vazgeçilmez',price:'7.499 ₺',score:'9.1',stars:5,link:'https://www.trendyol.com/sr?q=airpods+pro+2',specs:{'Tip':'In-Ear True Wireless','ANC':'Adaptif ANC','Batarya':'6 saat (30 kılıflı)','Şarj':'MagSafe','Çip':'Apple H2','Codec':'AAC','Ağırlık':'5.3g (tek)','Özellik':'Spatial Audio'},pros:['Apple ekosistemi','Spatial Audio','Kompakt','Mükemmel ANC'],cons:['Sadece Apple için optimize','Pahalı','Kaybetme riski']},
+  {id:9,cat:'Kulaklık',type:'headphone',c1:'#0d1520',c2:'#132030',ac:'#00c9a7',hot:false,name:'Sennheiser Momentum 4',tagline:'Müzisyenler için referans ses',price:'6.499 ₺',score:'8.8',stars:4,link:'https://www.trendyol.com/sr?q=sennheiser+momentum+4',specs:{'Tip':'Over-Ear Wireless','ANC':'Adaptif ANC','Batarya':'60 saat','Codec':'aptX Adaptive','Sürücü':'42mm','Ağırlık':'293g','EQ':'Sennheiser App','Mikrofon':'4 Mikrofon'},pros:['60 saat batarya','Nötr referans ses','Premium yapı','aptX Adaptive'],cons:['ANC Sony\'den zayıf','Ağır','Az popüler']},
+  {id:16,cat:'Kulaklık',type:'earbud',c1:'#0d1520',c2:'#0f1d2a',ac:'#4fc3f7',hot:false,name:'Samsung Galaxy Buds3 Pro',tagline:'Android kullanıcıları için en iyi',price:'5.999 ₺',score:'8.7',stars:4,link:'https://www.trendyol.com/sr?q=samsung+galaxy+buds3+pro',specs:{'Tip':'In-Ear True Wireless','ANC':'Akıllı ANC','Batarya':'6 saat (30 kılıflı)','Codec':'SSC HiFi','Sürücü':'10.5mm + 6.1mm','Ağırlık':'5.5g','Özellik':'360 Audio','Su':'IP57'},pros:['Galaxy AI','Çift sürücü','360 Audio','IP57 su direnci'],cons:['Samsung dışında sınırlı','Kulak rahatsızlığı','Pahalı']},
+  {id:17,cat:'Kulaklık',type:'headphone',c1:'#1a0d14',c2:'#2a1520',ac:'#ff4d6d',hot:false,name:'Bose QuietComfort 45',tagline:'Uçuşun en konforlu kulaklığı',price:'7.999 ₺',score:'9.0',stars:5,link:'https://www.trendyol.com/sr?q=bose+quietcomfort+45',specs:{'Tip':'Over-Ear Wireless','ANC':'Bose Acoustic NC','Batarya':'24 saat','Hızlı Şarj':'15 dk → 2.5 saat','Sürücü':'40mm TriPort','Codec':'AAC, SBC','Ağırlık':'238g','Mod':'Quiet / Aware'},pros:['Üstün ses kalitesi','Hafif ve konforlu','Aware modu','Uçuş için ideal'],cons:['Sony\'nin ANC\'i daha iyi','LDAC yok','Pahalı']},
+  {id:18,cat:'Kulaklık',type:'earbud',c1:'#0d150d',c2:'#142014',ac:'#aed581',hot:false,name:'Sony WF-1000XM5',tagline:'En küçük en güçlü ANC earbud',price:'6.299 ₺',score:'9.2',stars:5,link:'https://www.trendyol.com/sr?q=sony+wf-1000xm5',specs:{'Tip':'In-Ear True Wireless','ANC':'Sektör Lideri Earbud','Batarya':'8 saat (36 kılıflı)','Çip':'Sony QN2e','Codec':'LDAC, AAC','Ağırlık':'5.9g','Özellik':'360 Reality Audio','Mikrofon':'AI Filtre'},pros:['Earbud\'da en iyi ANC','LDAC Hi-Res','Kompakt tasarım','36 saat toplam'],cons:['Pahalı','Küçük kılıf','Bose\'den az konforlu']}
+];
+
+var currentCat = 'Tümü', compareList = [], searchTerm = '';
+
+function renderGrid() {
+  var grid = document.getElementById('product-grid');
+  var filtered = PRODUCTS.filter(function(p) {
+    return (currentCat === 'Tümü' || p.cat === currentCat) &&
+      (p.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1 || p.tagline.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1);
+  });
+  grid.innerHTML = filtered.map(function(p, i) {
+    var inC = compareList.indexOf(p.id) > -1;
+    return '<div class="card" style="animation-delay:' + (i*0.06) + 's" onclick="showDetail(' + p.id + ')">' +
+      (p.hot ? '<span class="badge-hot">🔥 Popüler</span>' : '') +
+      '<button class="add-compare ' + (inC ? 'added' : '') + '" onclick="toggleCompare(event,' + p.id + ')">' + (inC ? '✓ Seçildi' : '+ Karşılaştır') + '</button>' +
+      '<div class="card-img">' + getSVG(p.type, p.c1, p.c2, p.ac) + '</div>' +
+      '<div class="card-body"><div class="card-cat">' + p.cat + '</div><div class="card-name">' + p.name + '</div>' +
+      '<div class="card-tagline">' + p.tagline + '</div>' +
+      '<div class="card-footer"><div class="card-price">' + p.price + '</div><div class="card-score"><span class="star">★</span> ' + p.score + '</div></div></div></div>';
+  }).join('');
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  renderGrid();
+}
+
+function filterProducts() {
+  searchTerm = document.getElementById('search-input').value;
+  renderGrid();
+}
+
+function showDetail(id) {
+  var p = PRODUCTS.filter(function(x) { return x.id === id; })[0];
+  if (!p) return;
+  var specs = Object.keys(p.specs).map(function(k) {
+    return '<div class="spec-item"><div class="spec-label">' + k + '</div><div class="spec-value">' + p.specs[k] + '</div></div>';
+  }).join('');
+  var pros = p.pros.map(function(x) { return '<div class="pc-item">' + x + '</div>'; }).join('');
+  var cons = p.cons.map(function(x) { return '<div class="pc-item">' + x + '</div>'; }).join('');
+  var stars = '★★★★★'.substr(0, p.stars) + '☆☆☆☆☆'.substr(0, 5 - p.stars);
+  var inC = compareList.indexOf(p.id) > -1;
+  document.getElementById('detail-content').innerHTML =
+    '<div class="detail-grid fade-in"><div class="detail-img">' + getSVG(p.type,p.c1,p.c2,p.ac) + '</div>' +
+    '<div class="detail-info"><div class="detail-cat">' + p.cat + '</div><div class="detail-name">' + p.name + '</div>' +
+    '<div class="detail-tagline">' + p.tagline + '</div>' +
+    '<div class="detail-score"><div class="big-score">' + p.score + '</div><div><div class="score-stars">' + stars + '</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Uzman Puanı</div></div></div>' +
+    '<div class="detail-price">' + p.price + ' <span>Trendyol\'da</span></div>' +
+    '<a class="trendyol-btn" href="' + p.link + '" target="_blank">🛍️ Trendyol\'da İncele</a>' +
+    '<button class="add-compare-detail" onclick="toggleCompare(null,' + p.id + ')">' + (inC ? '✓ Karşılaştırmadan Çıkar' : '⚖️ Karşılaştırmaya Ekle') + '</button></div></div>' +
+    '<div><div class="specs-title">Teknik Özellikler</div><div class="specs-grid">' + specs + '</div>' +
+    '<div class="pros-cons"><div class="pros"><div class="pc-title">✅ Artılar</div>' + pros + '</div><div class="cons"><div class="pc-title">❌ Eksiler</div>' + cons + '</div></div></div>';
+  showPage('detail');
+  window.scrollTo(0,0);
+}
+
+function toggleCompare(e, id) {
+  if (e) e.stopPropagation();
+  var idx = compareList.indexOf(id);
+  var p = PRODUCTS.filter(function(x) { return x.id === id; })[0];
+  if (idx === -1) {
+    if (compareList.length >= 3) { showToast('⚠️ En fazla 3 ürün karşılaştırabilirsiniz'); return; }
+    compareList.push(id);
+    showToast('✓ "' + p.name + '" karşılaştırmaya eklendi');
+  } else {
+    compareList.splice(idx, 1);
+    showToast('"' + p.name + '" çıkarıldı');
+  }
+  document.getElementById('compare-count').textContent = compareList.length;
+  renderGrid();
+  var btn = document.querySelector('.add-compare-detail');
+  if (btn) btn.textContent = compareList.indexOf(id) > -1 ? '✓ Karşılaştırmadan Çıkar' : '⚖️ Karşılaştırmaya Ekle';
+}
+
+function renderCompare() {
+  var wrap = document.getElementById('compare-content');
+  if (!compareList.length) {
+    wrap.innerHTML = '<div class="empty-compare"><div class="icon">⚖️</div><p>Henüz ürün eklemediniz.<br>Kartlardaki "+ Karşılaştır" butonuna tıklayın.</p></div>';
+    return;
+  }
+  var items = compareList.map(function(id) { return PRODUCTS.filter(function(x) { return x.id === id; })[0]; });
+  var allKeys = [];
+  items.forEach(function(p) { Object.keys(p.specs).forEach(function(k) { if (allKeys.indexOf(k) < 0) allKeys.push(k); }); });
+  var headers = items.map(function(p) {
+    return '<th><div style="width:80px;height:56px;border-radius:8px;overflow:hidden;position:relative;margin:0 auto 10px">' + getSVG(p.type,p.c1,p.c2,p.ac) + '</div><div>' + p.name + '</div><div style="color:var(--accent);font-size:16px;margin-top:6px">' + p.price + '</div><button class="remove-col" onclick="removeCompare(' + p.id + ')">✕</button></th>';
+  }).join('');
+  var scoreRow = '<tr style="background:rgba(240,165,0,0.05)"><td>⭐ Puan</td>' + items.map(function(p) { return '<td style="color:var(--accent);font-weight:700;font-size:18px">' + p.score + '</td>'; }).join('') + '</tr>';
+  var rows = allKeys.map(function(k) {
+    return '<tr><td>' + k + '</td>' + items.map(function(p) { return '<td>' + (p.specs[k] || '—') + '</td>'; }).join('') + '</tr>';
+  }).join('');
+  wrap.innerHTML = '<div style="overflow-x:auto"><table class="compare-table fade-in"><thead><tr><th>Özellik</th>' + headers + '</tr></thead><tbody>' + scoreRow + rows + '</tbody></table></div>';
+}
+
+function removeCompare(id) {
+  compareList = compareList.filter(function(x) { return x !== id; });
+  document.getElementById('compare-count').textContent = compareList.length;
+  renderCompare();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById(name + '-page').classList.add('active');
+  if (name === 'compare') renderCompare();
+  window.scrollTo(0,0);
+}
+
+var _toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+renderGrid();
+</script>
+</body>
+</html>
